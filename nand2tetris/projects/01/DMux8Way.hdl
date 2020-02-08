@@ -11,10 +11,33 @@
  *                            {0, 0, 0, 0, 0, 0, 0, in} if sel == 111
  */
 
+/**
+* sel2 sel1 sel0 | a   b   c   d   e   f   g   h
+*  0    0    0   |in   0   0   0   0   0   0   0
+*  0    0    1   | 0  in   0   0   0   0   0   0
+*  0    1    0   | 0   0  in   0   0   0   0   0
+*  0    1    1   | 0   0   0  in   0   0   0   0
+*  1    0    0   | 0   0   0   0  in   0   0   0
+*  1    0    1   | 0   0   0   0   0  in   0   0
+*  1    1    0   | 0   0   0   0   0   0  in   0
+*  1    1    1   | 0   0   0   0   0   0   0  in
+*/
+
 CHIP DMux8Way {
     IN in, sel[3];
     OUT a, b, c, d, e, f, g, h;
 
     PARTS:
     // Put your code here:
+    Not(in=sel[2], out=notsel2);
+    DMux4Way(in=in, sel=sel[0..1], a=a01, b=b01, c=c01, d=d01);
+    DMux4Way(in=in, sel=sel[0..1], a=e01, b=f01, c=g01, d=h01);
+    And(a=a01, b=notsel2, out=a);
+    And(a=b01, b=notsel2, out=b);
+    And(a=c01, b=notsel2, out=c);
+    And(a=d01, b=notsel2, out=d);
+    And(a=e01, b=sel[2], out=e);
+    And(a=f01, b=sel[2], out=f);
+    And(a=g01, b=sel[2], out=g);
+    And(a=h01, b=sel[2], out=h);
 }
